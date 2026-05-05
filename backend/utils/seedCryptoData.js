@@ -115,20 +115,47 @@ const cryptoData = [
   }
 ];
 
-const seedData = async () => {
+const seedData = async (options = {}) => {
+  const args = process.argv.slice(2);
+  const reset = options.reset || args.includes('--reset');
   try {
     await connectDB();
-    
-    // Clear existing data
-    await Crypto.deleteMany();
-    
+
+    if (reset) {
+      console.log('Clearing all existing crypto data...');
+      await Crypto.deleteMany();
+      console.log('Existing data cleared.');
+    }
+
+    // Check for existing symbols to avoid duplicates
+    const existingCryptos = await Crypto.find({}, 'symbol');
+    const existingSymbols = new Set(existingCryptos.map(c => c.symbol.toUpperCase()));
+
+    // Filter out any data that already exists by symbol
+    const newData = cryptoData.filter(item => !existingSymbols.has(item.symbol.toUpperCase()));
+    const skipped = cryptoData.length - newData.length;
+
+    if (newData.length === 0 && !reset) {
+      console.log('No new data to seed. All crypto symbols already exist in the database.');
+      console.log(`Total cryptos in database: ${existingCryptos.length}`);
+      console.log('Use --reset flag to clear and reseed all data.');
+      process.exit(0);
+    }
+
     // Insert new data
-    await Crypto.insertMany(cryptoData);
-    
-    console.log('Crypto data seeded successfully!');
+    const result = await Crypto.insertMany(newData);
+    if (reset) {
+      console.log(`Crypto data seeded successfully! ${result.length} crypto asset(s) in database.`);
+    } else {
+      console.log(`Crypto data seeded successfully! Added ${result.length} new crypto asset(s).`);
+      if (skipped > 0) {
+        console.log(`Skipped ${skipped} existing crypto asset(s).`);
+      }
+    }
+    console.log(`Total cryptos in database: ${existingCryptos.length + result.length}`);
     process.exit(0);
   } catch (error) {
-    console.error('Error seeding data:', error);
+    console.error('Error seeding data:', error.message);
     process.exit(1);
   }
 };
