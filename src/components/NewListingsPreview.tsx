@@ -57,14 +57,14 @@ const NewListingsPreview = () => {
             </p>
           </div>
           <Link 
-            to="/crypto/new" 
-            className="btn btn-outline btn-sm group"
-          >
-            View all
-            <svg className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </Link>
+             to="/crypto/new" 
+             className="btn btn-outline btn-sm group"
+           >
+             View all
+             <svg className="w-3 h-3 ml-2 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+             </svg>
+           </Link>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -93,41 +93,41 @@ const NewListingsPreview = () => {
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 to-emerald-500/0 group-hover:from-cyan-500/5 group-hover:to-emerald-500/5 transition-colors duration-300" />
                 <div className="relative z-10">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg relative overflow-hidden">
-                      <img 
-                        src={asset.image} 
-                        alt={asset.name}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.currentTarget.src = `https://via.placeholder.com/48x48/0891b2/ffffff?text=${asset.symbol.slice(0, 2)}`
-                        }}
-                      />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="font-bold text-text truncate">{asset.symbol}</p>
-                      <p className="text-xs text-text-muted truncate">{asset.name}</p>
-                    </div>
-                  </div>
+                   <div className="flex items-center gap-3 mb-4">
+                     <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg relative overflow-hidden">
+                       <img 
+                         src={asset.image} 
+                         alt={asset.name}
+                         className="w-full h-full object-cover"
+                         onError={(e) => {
+                           e.currentTarget.src = `https://via.placeholder.com/40x40/0891b2/ffffff?text=${asset.symbol.slice(0, 2)}`
+                         }}
+                       />
+                     </div>
+                     <div className="min-w-0">
+                       <p className="font-bold text-text truncate">{asset.symbol}</p>
+                       <p className="text-xs text-text-muted truncate">{asset.name}</p>
+                     </div>
+                   </div>
                   <div className="mb-3">
                     <p className="font-bold text-xl text-text">{formatGHS(asset.price)}</p>
                   </div>
                   <div className="flex items-center gap-1">
-                    <span className={`inline-flex items-center font-bold ${
-                      asset.change24h >= 0 ? 'text-success' : 'text-danger'
-                    }`}>
-                      {asset.change24h >= 0 ? '+' : ''}{asset.change24h.toFixed(2)}%
-                      {asset.change24h >= 0 ? (
-                        <svg className="w-4 h-4 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                        </svg>
-                      ) : (
-                        <svg className="w-4 h-4 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                        </svg>
-                      )}
-                    </span>
-                  </div>
+                     <span className={`inline-flex items-center font-bold ${
+                       asset.change24h >= 0 ? 'text-success' : 'text-danger'
+                     }`}>
+                       {asset.change24h >= 0 ? '+' : ''}{asset.change24h.toFixed(2)}%
+                       {asset.change24h >= 0 ? (
+                         <svg className="w-3 h-3 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                         </svg>
+                       ) : (
+                         <svg className="w-3 h-3 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                         </svg>
+                       )}
+                     </span>
+                   </div>
                   {asset.isNew && (
                     <div className="mt-3">
                       <span className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white text-xs font-bold rounded-full">

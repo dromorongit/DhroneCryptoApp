@@ -70,7 +70,7 @@ const TrustSafetySection = () => {
               className="card card-elevated p-6 group hover:shadow-xl transition-all duration-300"
             >
               <div className="flex items-start gap-4">
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-bg-secondary to-bg-secondary flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform duration-300">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-bg-secondary to-bg-secondary flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform duration-300">
                   {getIcon(feature.icon)}
                 </div>
                 <div className="flex-1">
