@@ -1,4 +1,5 @@
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 interface MobileMenuProps {
   isOpen: boolean
@@ -6,7 +7,14 @@ interface MobileMenuProps {
 }
 
 const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
-  const isAuthenticated = !!localStorage.getItem('token')
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/')
+    onClose()
+  }
 
   if (!isOpen) return null
 
@@ -65,34 +73,39 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
           >
             New Listings
           </NavLink>
-          {isAuthenticated && (
-            <NavLink
-              to="/crypto/add"
-              onClick={onClose}
-              className={({ isActive }) =>
-                `text-base font-medium ${isActive ? 'text-accent' : 'text-text-secondary'}`
-              }
-            >
-              Add Crypto
-            </NavLink>
-          )}
-        </nav>
+          {user && (
+             <NavLink
+               to="/crypto/add"
+               onClick={onClose}
+               className={({ isActive }) =>
+                 `text-base font-medium ${isActive ? 'text-accent' : 'text-text-secondary'}`
+               }
+             >
+               Add Crypto
+             </NavLink>
+           )}
+         </nav>
 
-        <div className="mt-8 pt-8 border-t border-border flex flex-col gap-3">
-          {isAuthenticated ? (
-            <Link to="/profile" onClick={onClose} className="btn btn-primary w-full">
-              Profile
-            </Link>
-          ) : (
-            <>
-              <Link to="/login" onClick={onClose} className="btn btn-secondary w-full">
-                Login
-              </Link>
-              <Link to="/register" onClick={onClose} className="btn btn-primary w-full">
-                Sign up
-              </Link>
-            </>
-          )}
+         <div className="mt-8 pt-8 border-t border-border flex flex-col gap-3">
+           {user ? (
+             <>
+               <Link to="/profile" onClick={onClose} className="btn btn-primary w-full">
+                 Profile
+               </Link>
+               <button onClick={handleLogout} className="btn btn-secondary w-full">
+                 Logout
+               </button>
+             </>
+           ) : (
+             <>
+               <Link to="/login" onClick={onClose} className="btn btn-secondary w-full">
+                 Login
+               </Link>
+               <Link to="/register" onClick={onClose} className="btn btn-primary w-full">
+                 Sign up
+               </Link>
+             </>
+           )}
         </div>
       </div>
     </div>

@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { removeToken } from '../services/authService'
 
 const Profile = () => {
   const navigate = useNavigate()
@@ -15,7 +14,6 @@ const Profile = () => {
 
   const handleLogout = () => {
     authLogout()
-    removeToken()
     navigate('/')
   }
 

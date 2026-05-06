@@ -1,10 +1,17 @@
 import { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import MobileMenu from './MobileMenu'
+import { useAuth } from '../context/AuthContext'
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const isAuthenticated = !!localStorage.getItem('token')
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/')
+  }
 
   const navLinks = [
     { to: '/', label: 'Home' },
@@ -43,7 +50,7 @@ const Navbar = () => {
 
         {/* Right side buttons */}
         <div className="flex items-center gap-3">
-          {isAuthenticated ? (
+          {user ? (
             <>
               <Link
                 to="/crypto/add"
@@ -54,6 +61,9 @@ const Navbar = () => {
               <Link to="/profile" className="btn btn-primary text-sm">
                 Profile
               </Link>
+              <button onClick={handleLogout} className="btn btn-secondary text-sm">
+                Logout
+              </button>
             </>
           ) : (
             <>

@@ -2,7 +2,22 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { getTopGainers } from '../services/cryptoService'
 import type { CryptoAsset } from '../services/cryptoService'
-import { formatGHS } from '../data/mockCrypto'
+import { formatGHS, topGainers } from '../data/mockCrypto'
+
+// Helper to convert mock data to API format
+const convertMockToApiFormat = (mockData: typeof topGainers[0][]): CryptoAsset[] => {
+  return mockData.map((item) => ({
+    _id: item.id,
+    name: item.name,
+    symbol: item.symbol,
+    price: item.price,
+    image: `https://via.placeholder.com/40?text=${item.symbol.slice(0, 2)}`,
+    change24h: item.change24h,
+    marketCap: item.marketCap,
+    volume24h: item.volume24h,
+    isNew: item.isNew,
+  }))
+}
 
 const TopGainersPreview = () => {
   const [gainers, setGainers] = useState<CryptoAsset[]>([])
@@ -12,11 +27,15 @@ const TopGainersPreview = () => {
     const fetchGainers = async () => {
       try {
         const response = await getTopGainers()
-        if (response.success) {
-          setGainers(response.data.slice(0, 4))
+        if (response.success && response.data.length > 0) {
+          setGainers(response.data.slice(0, 6))
+        } else {
+          // Fallback to mock data
+          setGainers(convertMockToApiFormat(topGainers).slice(0, 6))
         }
       } catch (err) {
-        // Fallback to empty
+        // Fallback to mock data on error
+        setGainers(convertMockToApiFormat(topGainers).slice(0, 6))
       } finally {
         setLoading(false)
       }
@@ -35,9 +54,22 @@ const TopGainersPreview = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {loading ? (
-            <div className="col-span-4 text-center text-text-secondary">Loading...</div>
+            // Loading skeletons
+            Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="card p-4 animate-pulse">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 bg-bg-secondary rounded-full"></div>
+                  <div>
+                    <div className="h-4 bg-bg-secondary rounded w-12 mb-1"></div>
+                    <div className="h-3 bg-bg-secondary rounded w-16"></div>
+                  </div>
+                </div>
+                <div className="h-5 bg-bg-secondary rounded w-20 mb-2"></div>
+                <div className="h-4 bg-bg-secondary rounded w-12"></div>
+              </div>
+            ))
           ) : (
             gainers.map((asset) => (
               <Link
@@ -60,8 +92,10 @@ const TopGainersPreview = () => {
                   </div>
                 </div>
                 <p className="font-bold text-text mb-1">{formatGHS(asset.price)}</p>
-                <span className="text-success font-medium text-sm">
-                  +{asset.change24h.toFixed(2)}%
+                <span className={`font-medium text-sm ${
+                  asset.change24h >= 0 ? 'text-success' : 'text-danger'
+                }`}>
+                  {asset.change24h >= 0 ? '+' : ''}{asset.change24h.toFixed(2)}%
                 </span>
               </Link>
             ))

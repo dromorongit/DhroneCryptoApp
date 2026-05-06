@@ -2,9 +2,24 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { getCryptos, getTopGainers, getNewListings } from '../services/cryptoService'
 import type { CryptoAsset } from '../services/cryptoService'
-import { formatGHS } from '../data/mockCrypto'
+import { formatGHS, mockCryptoData, topGainers, newListings } from '../data/mockCrypto'
 
 type TabType = 'tradable' | 'gainers' | 'new'
+
+// Helper to convert mock data to API format
+const convertMockToApiFormat = (mockData: typeof mockCryptoData[0][]): CryptoAsset[] => {
+  return mockData.map((item) => ({
+    _id: item.id,
+    name: item.name,
+    symbol: item.symbol,
+    price: item.price,
+    image: `https://via.placeholder.com/32?text=${item.symbol.slice(0, 2)}`,
+    change24h: item.change24h,
+    marketCap: item.marketCap,
+    volume24h: item.volume24h,
+    isNew: item.isNew,
+  }))
+}
 
 const MarketPreviewCard = () => {
   const [activeTab, setActiveTab] = useState<TabType>('tradable')
@@ -22,11 +37,31 @@ const MarketPreviewCard = () => {
           getNewListings()
         ])
         
-        if (tradableRes.success) setTradableData(tradableRes.data.slice(0, 5))
-        if (gainersRes.success) setGainersData(gainersRes.data)
-        if (newListingsRes.success) setNewListData(newListingsRes.data)
+        if (tradableRes.success && tradableRes.data.length > 0) {
+          setTradableData(tradableRes.data.slice(0, 6))
+        } else {
+          // Fallback to mock data
+          setTradableData(convertMockToApiFormat(mockCryptoData).slice(0, 6))
+        }
+        
+        if (gainersRes.success && gainersRes.data.length > 0) {
+          setGainersData(gainersRes.data.slice(0, 6))
+        } else {
+          // Fallback to mock data
+          setGainersData(convertMockToApiFormat(topGainers).slice(0, 6))
+        }
+        
+        if (newListingsRes.success && newListingsRes.data.length > 0) {
+          setNewListData(newListingsRes.data.slice(0, 6))
+        } else {
+          // Fallback to mock data
+          setNewListData(convertMockToApiFormat(newListings).slice(0, 6))
+        }
       } catch (err) {
-        // Fallback to empty data
+        // Fallback to mock data on error
+        setTradableData(convertMockToApiFormat(mockCryptoData).slice(0, 6))
+        setGainersData(convertMockToApiFormat(topGainers).slice(0, 6))
+        setNewListData(convertMockToApiFormat(newListings).slice(0, 6))
       } finally {
         setLoading(false)
       }
@@ -85,9 +120,24 @@ const MarketPreviewCard = () => {
           {/* Asset Rows */}
           <div className="divide-y divide-border">
             {loading ? (
-              <div className="px-6 py-8 text-center text-text-secondary">
-                Loading...
-              </div>
+              // Loading skeletons
+              Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="grid grid-cols-3 gap-4 px-6 py-4 animate-pulse">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-bg-secondary rounded-full"></div>
+                    <div>
+                      <div className="h-4 bg-bg-secondary rounded w-12 mb-1"></div>
+                      <div className="h-3 bg-bg-secondary rounded w-20"></div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="h-4 bg-bg-secondary rounded w-16 ml-auto"></div>
+                  </div>
+                  <div className="text-right">
+                    <div className="h-4 bg-bg-secondary rounded w-12 ml-auto"></div>
+                  </div>
+                </div>
+              ))
             ) : (
               data.map((asset) => (
                 <Link

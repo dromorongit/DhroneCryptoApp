@@ -2,12 +2,12 @@ import { Link } from 'react-router-dom'
 
 const HeroSection = () => {
   return (
-    <section className="py-20 px-4">
-      <div className="container max-w-4xl mx-auto text-center">
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-text mb-6">
-          Trade crypto with confidence.
+    <section className="py-24 px-4 bg-gradient-to-b from-bg to-bg-secondary">
+      <div className="container max-w-5xl mx-auto text-center">
+        <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-text mb-6 leading-tight">
+          Trade Crypto with Confidence
         </h1>
-        <p className="text-lg md:text-xl text-text-secondary mb-8 max-w-2xl mx-auto">
+        <p className="text-xl md:text-2xl text-text-secondary mb-10 max-w-3xl mx-auto">
           Explore digital assets, track market movers, and manage your demo portfolio from one clean student-built platform.
         </p>
         
