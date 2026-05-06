@@ -1,18 +1,15 @@
-import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
+import { Link } from 'react-router-dom'
 
 interface MobileMenuProps {
   isOpen: boolean
   onClose: () => void
+  user: any
+  onLogout: () => void
 }
 
-const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
-
+const MobileMenu = ({ isOpen, onClose, user, onLogout }: MobileMenuProps) => {
   const handleLogout = () => {
-    logout()
-    navigate('/')
+    onLogout()
     onClose()
   }
 
@@ -21,91 +18,90 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
   return (
     <div className="fixed inset-0 z-50 md:hidden">
       <div className="fixed inset-0 bg-black/50" onClick={onClose} />
-      <div className="fixed right-0 top-0 h-full w-64 bg-bg-card shadow-lg p-6">
+      <div className="fixed right-0 top-0 h-full w-[280px] bg-bg-card shadow-2xl p-6 space-y-6">
         <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">DC</span>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/20">
+              <span className="text-white font-extrabold text-lg tracking-tight">DC</span>
             </div>
-            <span className="font-bold text-xl">DhroneCrypto</span>
+            <span className="font-bold text-xl text-text tracking-tight">DhroneCrypto</span>
           </div>
-          <button onClick={onClose} className="p-2">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <button 
+            onClick={onClose}
+            className="p-2 rounded-lg hover:bg-bg-secondary transition-colors"
+            aria-label="Close menu"
+          >
+            <svg className="w-6 h-6 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
-        <nav className="flex flex-col gap-4">
-          <NavLink
-            to="/"
-            onClick={onClose}
-            className={({ isActive }) =>
-              `text-base font-medium ${isActive ? 'text-accent' : 'text-text-secondary'}`
-            }
-          >
-            Home
-          </NavLink>
-          <NavLink
-            to="/crypto"
-            onClick={onClose}
-            className={({ isActive }) =>
-              `text-base font-medium ${isActive ? 'text-accent' : 'text-text-secondary'}`
-            }
-          >
-            Markets
-          </NavLink>
-          <NavLink
-            to="/crypto/gainers"
-            onClick={onClose}
-            className={({ isActive }) =>
-              `text-base font-medium ${isActive ? 'text-accent' : 'text-text-secondary'}`
-            }
-          >
-            Top Gainers
-          </NavLink>
-          <NavLink
-            to="/crypto/new"
-            onClick={onClose}
-            className={({ isActive }) =>
-              `text-base font-medium ${isActive ? 'text-accent' : 'text-text-secondary'}`
-            }
-          >
-            New Listings
-          </NavLink>
-          {user && (
-             <NavLink
-               to="/crypto/add"
-               onClick={onClose}
-               className={({ isActive }) =>
-                 `text-base font-medium ${isActive ? 'text-accent' : 'text-text-secondary'}`
-               }
-             >
-               Add Crypto
-             </NavLink>
-           )}
-         </nav>
+        <nav className="space-y-2">
+          {user ? (
+            <>
+              <div className="px-4 py-3 bg-bg-secondary/50 rounded-xl mb-4">
+                <p className="font-semibold text-text text-sm">{user?.name ?? 'User'}</p>
+                <p className="text-xs text-text-muted">{user?.email}</p>
+              </div>
+              <Link
+                to="/crypto/add"
+                className="flex items-center gap-3 px-4 py-3 text-text-secondary hover:text-accent hover:bg-accent/5 rounded-xl transition-colors"
+                onClick={onClose}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Add Crypto
+              </Link>
+              <Link
+                to="/profile"
+                className="flex items-center gap-3 px-4 py-3 text-text-secondary hover:text-accent hover:bg-accent/5 rounded-xl transition-colors"
+                onClick={onClose}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                Profile
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3 px-4 py-3 text-text-secondary hover:text-danger hover:bg-danger/5 rounded-xl transition-colors text-left"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="flex items-center gap-3 px-4 py-3 text-text-secondary hover:text-accent hover:bg-accent/5 rounded-xl transition-colors"
+                onClick={onClose}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                Login
+              </Link>
+              <Link
+                to="/register"
+                className="flex items-center gap-3 px-4 py-3 text-text-secondary hover:text-accent hover:bg-accent/5 rounded-xl transition-colors"
+                onClick={onClose}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                </svg>
+                Register
+              </Link>
+            </>
+          )}
+        </nav>
 
-         <div className="mt-8 pt-8 border-t border-border flex flex-col gap-3">
-           {user ? (
-             <>
-               <Link to="/profile" onClick={onClose} className="btn btn-primary w-full">
-                 Profile
-               </Link>
-               <button onClick={handleLogout} className="btn btn-secondary w-full">
-                 Logout
-               </button>
-             </>
-           ) : (
-             <>
-               <Link to="/login" onClick={onClose} className="btn btn-secondary w-full">
-                 Login
-               </Link>
-               <Link to="/register" onClick={onClose} className="btn btn-primary w-full">
-                 Sign up
-               </Link>
-             </>
-           )}
+        <div className="pt-6 border-t border-border/50 mt-auto">
+          <p className="text-xs text-text-muted text-center">Demo App</p>
         </div>
       </div>
     </div>

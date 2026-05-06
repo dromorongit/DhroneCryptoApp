@@ -46,28 +46,42 @@ const NewListingsPreview = () => {
 
   return (
     <section className="py-16 px-4">
-      <div className="container max-w-4xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-3xl font-bold">New Listings</h2>
-          <Link to="/crypto/new" className="text-accent hover:text-accent-hover font-medium">
-            View all →
+      <div className="container max-w-6xl mx-auto">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+          <div>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-text mb-2">
+              New Listings
+            </h2>
+            <p className="text-text-secondary">
+              Fresh crypto assets added to the platform
+            </p>
+          </div>
+          <Link 
+            to="/crypto/new" 
+            className="btn btn-outline btn-sm group"
+          >
+            View all
+            <svg className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {loading ? (
             // Loading skeletons
             Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="card p-4 animate-pulse">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 bg-bg-secondary rounded-full"></div>
-                  <div>
-                    <div className="h-4 bg-bg-secondary rounded w-12 mb-1"></div>
-                    <div className="h-3 bg-bg-secondary rounded w-16"></div>
+              <div key={i} className="card p-5 animate-pulse">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-bg-secondary rounded-xl"></div>
+                  <div className="space-y-2 flex-1">
+                    <div className="h-4 bg-bg-secondary rounded w-16"></div>
+                    <div className="h-3 bg-bg-secondary rounded w-12"></div>
                   </div>
                 </div>
-                <div className="h-5 bg-bg-secondary rounded w-20 mb-2"></div>
-                <div className="h-4 bg-bg-secondary rounded w-12"></div>
+                <div className="h-6 bg-bg-secondary rounded w-20 mb-2"></div>
+                <div className="h-4 bg-bg-secondary rounded w-16"></div>
+                <div className="mt-3 h-5 bg-emerald-500/20 rounded w-20"></div>
               </div>
             ))
           ) : (
@@ -75,33 +89,59 @@ const NewListingsPreview = () => {
               <Link
                 key={asset._id}
                 to={`/crypto/${asset._id}`}
-                className="card p-4 hover:shadow-lg transition-shadow"
+                className="card p-5 hover:shadow-xl transition-all duration-300 group relative overflow-hidden"
               >
-                <div className="flex items-center gap-3 mb-3">
-                  <img 
-                    src={asset.image} 
-                    alt={asset.name}
-                    className="w-10 h-10 rounded-full"
-                    onError={(e) => {
-                      e.currentTarget.src = `https://via.placeholder.com/40?text=${asset.symbol.slice(0, 2)}`
-                    }}
-                  />
-                  <div>
-                    <p className="font-medium text-text">{asset.symbol}</p>
-                    <p className="text-xs text-text-secondary">{asset.name}</p>
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 to-emerald-500/0 group-hover:from-cyan-500/5 group-hover:to-emerald-500/5 transition-colors duration-300" />
+                <div className="relative z-10">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg relative overflow-hidden">
+                      <img 
+                        src={asset.image} 
+                        alt={asset.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src = `https://via.placeholder.com/48x48/0891b2/ffffff?text=${asset.symbol.slice(0, 2)}`
+                        }}
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-bold text-text truncate">{asset.symbol}</p>
+                      <p className="text-xs text-text-muted truncate">{asset.name}</p>
+                    </div>
+                  </div>
+                  <div className="mb-3">
+                    <p className="font-bold text-xl text-text">{formatGHS(asset.price)}</p>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className={`inline-flex items-center font-bold ${
+                      asset.change24h >= 0 ? 'text-success' : 'text-danger'
+                    }`}>
+                      {asset.change24h >= 0 ? '+' : ''}{asset.change24h.toFixed(2)}%
+                      {asset.change24h >= 0 ? (
+                        <svg className="w-4 h-4 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                        </svg>
+                      ) : (
+                        <svg className="w-4 h-4 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                        </svg>
+                      )}
+                    </span>
+                  </div>
+                  {asset.isNew && (
+                    <div className="mt-3">
+                      <span className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white text-xs font-bold rounded-full">
+                        <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
+                        NEW
+                      </span>
+                    </div>
+                  )}
+                  <div className="absolute top-3 right-3">
+                    <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-cyan-600 text-sm font-medium">
+                      View →
+                    </span>
                   </div>
                 </div>
-                <p className="font-bold text-text mb-1">{formatGHS(asset.price)}</p>
-                <span className={`font-medium text-sm ${
-                  asset.change24h >= 0 ? 'text-success' : 'text-danger'
-                }`}>
-                  {asset.change24h >= 0 ? '+' : ''}{asset.change24h.toFixed(2)}%
-                </span>
-                {asset.isNew && (
-                  <span className="inline-block ml-2 px-2 py-0.5 bg-accent/10 text-accent text-xs rounded">
-                    New
-                  </span>
-                )}
               </Link>
             ))
           )}
